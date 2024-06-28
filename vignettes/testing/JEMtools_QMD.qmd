@@ -1,0 +1,325 @@
+---
+title: "JEMtoolsQMD"
+author: "Emmanuel Jjunju"
+date: "`r Sys.Date()`"
+output: 
+  html_document: #rmarkdown::html_vignette:
+    embed-resources: true
+    toc: true
+    toc_float: true
+    toc_collapsed: true
+    toc_depth: 3
+    number_sections: true
+    theme: lumen
+    toc-location: left
+    html-math-method: katex
+    page-layout: full #full article custom
+    keep-md: true
+vignette: >
+  %\VignetteIndexEntry{JEMtoolsQMD}
+  %\VignetteEngine{JEMtools::quarto}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Vignette Creation help (to be deleted)
+
+Vignettes are long form documentation commonly included in packages.
+Because they are part of the distribution of the package, they need to be as compact as possible.
+The `html_vignette` output type provides a custom style sheet (and tweaks some options) to ensure that the resulting html is as small as possible.
+The `html_vignette` format:
+
+-   Never uses retina figures
+-   Has a smaller default figure size
+-   Uses a custom CSS stylesheet instead of the default Twitter Bootstrap style
+
+## Vignette Info
+
+Note the various macros within the `vignette` section of the metadata block above.
+These are required in order to instruct R how to build the vignette.
+Note that you should change the `title` field and the `\VignetteIndexEntry` to match the title of your vignette.
+
+## Styles
+
+The `html_vignette` template includes a basic CSS theme.
+To override this theme you can specify your own CSS in the document metadata as follows:
+
+```         
+output: 
+  rmarkdown::html_vignette:
+    css: mystyles.css
+```
+
+## Figures
+
+The figure sizes have been customised so that you can easily put two images side-by-side.
+
+```{r, fig.show='hold'}
+plot(1:10)
+plot(10:1)
+```
+
+You can enable figure captions by `fig_caption: yes` in YAML:
+
+```         
+output:
+  rmarkdown::html_vignette:
+    fig_caption: yes
+```
+
+Then you can use the chunk option `fig.cap = "Your figure caption."` in **knitr**.
+[^1]: A footnote is made here.
+
+## More Examples
+
+You can write math expressions, e.g. $Y = X\beta + \epsilon$, footnotes[^1], and tables, e.g. using `knitr::kable()`.
+
+```{r, echo=FALSE, results='asis'}
+knitr::kable(head(mtcars, 10))
+```
+
+Also a quote using `>`:
+
+> "He who gives up [code] safety for [code] speed deserves neither." ([via](https://twitter.com/hadleywickham/status/504368538874703872))
+
+[^1]: A footnote here.
+
+# What does the package do?
+
+# Loading the package and dependecises and the documentation (vignette)
+
+```{r}
+#the package
+library(JEMtools) 
+
+#dependencies
+library(DiagrammeR)
+
+#The the documentation (vignette)
+vignette("ejjhydrotool",package = "JEMtools")
+```
+
+
+
+# Creating flow charts
+
+## fx.draw.system
+
+```{r}
+#| warning: false
+#| message: false
+#| fig-height: 8
+
+#load some included flow charts nodes and edges data
+Flowchart_Nodes_and_edges.xlsx <- system.file("data/Flowchart_Nodes_and_edges.xlsx",package = "JEMtools")
+fx.draw.system(nodes_edges_xls = Flowchart_Nodes_and_edges.xlsx,
+               rankdir = "TB")
+```
+
+## fx.draw.system.clusters
+
+```{r}
+#| warning: false
+#| message: false
+#| fig-height: 8
+
+#load some included flow charts nodes and edges data
+Flowchart_Nodes_and_edges.xlsx <- system.file("data/Flowchart_Nodes_and_edges.xlsx",package = "JEMtools")
+fx.draw.system.clusters(nodes_edges_xls = Flowchart_Nodes_and_edges.xlsx,
+               rankdir = "TB")
+```
+
+# Solving connected Reservoirs
+
+# Drawing maps
+
+# HBV Model Functions
+
+```{r}
+#| label: r_setup_hbv
+#| code-fold: true
+#| results: hide
+#| message: false
+#| warning: false
+#| echo: false
+#| 
+cat("\014") # empty console
+#load functions
+#source("D:/WORK/Tools/R/Packages/JEMtools/R/JEMtools_functions.R", echo=TRUE) 
+#library(JEMtools)
+graphics.off() # close all graphics devices
+#input the data
+input<-fx.hbv.daily.getdata(dir="D:/WORK/Tools/R/Packages/JEMtools/data/hbv",
+                            Timeseries ="Timeseries.txt",
+                            Free_Par.txt="Free_Par.txt",
+                            Fixed_Par.txt="Fixed_Par.txt",
+                            serie.start.date="2020-09-01")
+
+fig.hgt.series = 5
+fig.hgt.parallel = length(input$data$hyear)*(fig.hgt.series-1)
+
+#access the data included in the package
+system.file("extdata/hbv","Timeseries.txt",package = "JEMtools")
+system.file("extdata/hbv","Fixed_Par.txt",package = "JEMtools")
+system.file("extdata/hbv","Free_Par.txt",package = "JEMtools")
+```
+
+## Serial
+
+### Calibration mode (all years)
+
+```{r,fig.height=fig.hgt.series}
+#| label: fig.serial_calib_mode
+#| code-fold: true
+#| fig-cap: Serial run | Simulation mode 
+#| out-width: 100%
+#| message: false
+#| warning: false
+#| echo: true
+#| results: hide
+#| 
+prm<-input$data$fri[,2] #get the parameters
+#Function runs the model and returns the objectuve criteria
+calib.serial.out<-fx.hbv.model.serial(prm=prm,
+                                      input=input,
+                                      Snow2GlacierOption = TRUE,
+                                      Snow2GlacierJulianDate= as.Date(2020-09-01),
+                                      calibrate=TRUE,
+                                      obj.criteria = "NSE",
+                                      calib.plots = TRUE,
+                                      icall = 1)
+```
+
+### Simulation mode (all years)
+
+```{r,fig.height=fig.hgt.series}
+#| label: fig.serial_simulation_mode
+#| code-fold: true
+#| fig-cap: Serial run | Simulation mode
+#| out-width: 100%
+#| message: false
+#| warning: false
+#| echo: true
+#| results: hide
+
+prm<-input$data$fri[,2] #get the parameters
+#Function runs the model and returns the complete data from the simulation
+Sim.serial.out<-fx.hbv.model.serial(prm=NULL,
+                                        input=input,
+                                        Snow2GlacierOption = TRUE,
+                                        Snow2GlacierJulianDate= as.Date(2020-09-01),
+                                        calibrate=FALSE,
+                                        obj.criteria = "NSE",
+                                        calib.plots = TRUE,
+                                        icall = 1)
+```
+
+## Parallel
+
+### Calibration mode (Parallel - by hydrological year)
+
+```{r ,fig.height= fig.hgt.parallel}
+#| label: fig.Serial_Calibration_mode
+#| code-fold: true
+#| fig-cap: Parallel run | Calibration mode
+#| out-width: 100%
+#| message: false
+#| warning: false
+#| echo: true
+#| results: hide
+
+prm<-input$data$fri[,2] #get the parameters
+#Function runs the model and returns the complete data from the simulation
+calib.parallel.out<-fx.hbv.model.parallel(prm=NULL,
+                                        input=input,
+                                        Snow2GlacierOption = TRUE,
+                                        Snow2GlacierJulianDate= as.Date("2020-09-01"),
+                                        calibrate=TRUE,
+                                        obj.criteria = "NSE",
+                                        calib.plots = TRUE,
+                                        icall = 1)
+
+
+```
+
+### Simulation mode (Parallel - by hydrological year)
+
+```{r,fig.height= fig.hgt.parallel}
+#| label: fig.Parallel_Simulation_mode
+#| code-fold: true
+#| fig-cap: Parallel run | Simulation mode
+#| out-width: 100%
+#| message: false
+#| warning: false
+#| echo: true
+#| results: hide
+
+prm<-input$data$fri[,2] #get the parameters
+#Function runs the model and returns the complete data from the simulation
+Sim.parallel.out<-fx.hbv.model.parallel(prm=NULL,
+                                            input=input,
+                                            Snow2GlacierOption = TRUE,
+                                            Snow2GlacierJulianDate= as.Date("2020-09-01"),
+                                            calibrate=FALSE,
+                                            obj.criteria = "NSE",
+                                            calib.plots = TRUE,
+                                            icall = 1)
+```
+
+## Alaternative serial plots
+
+```{r}
+#| label: fig.ggplot
+#| code-fold: true
+#| fig-cap: Serial run | Simulation mode - ggplot
+#| out-width: 100%
+#| fig-height: 4
+#| message: false
+#| warning: false
+#| echo: true
+#| results: hide
+Time<-Sim.serial.out$Lumped$Time
+Qsim<-Sim.serial.out$Lumped$Qsim
+Qobs<-Sim.serial.out$Lumped$Qobs
+Prec<-Sim.serial.out$Lumped$Precipitation
+fx.ggplot.hbv(Qsim,Qobs,Time,Prec)
+```
+
+## Interactive serial plots
+
+```{r}
+#| label: fig.highcharter
+#| code-fold: true
+#| fig-cap: Serial run | Simulation mode - ggplot
+#| out-width: 100%
+#| fig-height: 8
+#| message: false
+#| warning: false
+#| echo: true
+Time<-Sim.serial.out$Lumped$Time
+Qsim<-Sim.serial.out$Lumped$Qsim
+Qobs<-Sim.serial.out$Lumped$Qobs
+Prec<-Sim.serial.out$Lumped$Precipitation
+#hc<-fx.highchart.hbv(Qsim,Qobs,Time,Prec,xts=T,theme = 1)
+d<-data.frame(Time,Qobs,Qsim,Prec)
+plot.title<-paste(paste(names(Sim.serial.out$objective.criteria),"=",round(Sim.serial.out$objective.criteria,2)),collapse="|")
+hc<-fx.highchart.many.series.and.yaxes(data_timeseries = d,
+                                       x =1,
+                                       y0 = 2:3,
+                                       y1 = 4,
+                                       cols0 = c("blue","red"),
+                                       cols1 = c("grey50"),
+                                       type0 = c("spline","spline"),
+                                       type1 = "column",
+                                       y0max = 1.2,
+                                       y1max=4,
+                                       main=plot.title)
+hc
+```
+

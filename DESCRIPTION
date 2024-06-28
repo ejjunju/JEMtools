@@ -1,0 +1,16 @@
+Package: JEMtools
+Type: Package
+Title: Contains functions that are useful for analysis, modelling and visualization related to hydrology and river hydraulics and other associated or related analyses.
+Version: 0.1.0
+Author: Emmanuel Jjunju
+Maintainer: The package maintainer <ejjunju@gmail.com>
+Description: Contains several functions that are useful for hydrology, river hyraulics and associated analyses and modelling. This package is under the GPL-3 license.Although this package is licensed under GPL-3, it has a dependency on Highcharts.    Highcharts may require a separate license for commercial use. If you’re unsure, you may want to consult with a legal expert. Drawing flow charts to represent Processes in analysis or objects in a physical environment. Hydrological model (HBV) with other supporing functions for input model data preparation, model set-up and results viewing
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.2.3
+VignetteBuilder: knitr, rmarkdown, JEMtools
+Suggests: knitr, rmarkdown
+Depends: knitr
+Imports: knitr
+
