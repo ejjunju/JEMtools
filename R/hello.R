@@ -49,4 +49,4 @@ hello <- function() {
 #git add -u . #This will add deletes as well.
 #git status #Check what's staged to be committed
 
-git filter-branch --index-filter 'git rm -r --cached --ignore-unmatch data/DEM/DEM.tif' HEAD
+#git filter-branch --index-filter 'git rm -r --cached --ignore-unmatch data/DEM/DEM.tif' HEAD
