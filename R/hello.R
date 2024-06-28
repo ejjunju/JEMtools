@@ -46,7 +46,9 @@ hello <- function() {
 #git config --get remote.origin.url
 
 #sometimes Can't push to GitHub because of large file which I already deleted
-#git add -u . #This will add deletes as well.
-#git status #Check what's staged to be committed
-
-#git filter-branch --index-filter 'git rm -r --cached --ignore-unmatch data/DEM/DEM.tif' HEAD
+# i had to create a new project linked to github url
+# edit r.ptoj file to make it a package by adding some lines
+# BuildType: Package
+# PackageUseDevtools: Yes
+# PackageInstallArgs: --no-multiarch --with-keep.source
+# PackageRoxygenize: rd,collate,namespace,vignette
